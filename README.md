@@ -343,6 +343,15 @@ Pectara Wallet shows the same warning and a "Keep my aged coins" box when sendin
 Without a terminal, `pec-cli send ADDRESS AMOUNT true null true` sends with
 younger coins first.
 
+If you do not give a fee, `send` asks the node what a payment needs to be in one
+of the next two blocks (`pec-cli estimatefee`; it shows the rate in base units
+per virtual byte, and is the network minimum, 1, unless the blocks are filling
+up). A payment that is still waiting after a while can be sped up:
+`pec-cli bumpfee TXID` shows the new fee, and `pec-cli bumpfee TXID true`
+replaces the payment by the same one with a higher fee. The extra fee comes out
+of your change, never from what the receiver gets, and only one of the two
+payments can ever be mined.
+
 The payment is in the next block, usually within a minute. You don't need to
 wait for it: your change can be spent straight away, so you can send another
 payment at once. Coins others send you can be spent once they are in a block.
@@ -522,6 +531,8 @@ seller can still accept it, even after the coins stop being kept aside.
 | `pec-cli getpeerinfo` | The nodes you are connected to |
 | `pec-cli getnodeaddresses 5` | Up to that many addresses of nodes yours knows about (default 10, at most 1000) |
 | `pec-cli getmempoolinfo` | Payments waiting for a block |
+| `pec-cli estimatefee 2` | The fee rate (base units per virtual byte) for a payment to be mined within about 2 blocks |
+| `pec-cli bumpfee TXID` | Shows the higher fee for a payment of yours that is still waiting; add `true` to replace it |
 | `pec-cli getrawmempool` | The ids of the payments waiting for a block, oldest first |
 | `pec-cli help` | Every command, grouped by topic (wallet, payments, names, mining…) |
 
@@ -650,6 +661,25 @@ Each release lists SHA-256 checksums (`SHA256SUMS.txt`). To check a file:
 - Linux: `sha256sum <file>`
 - macOS: `shasum -a 256 <file>`
 - Windows (PowerShell): `Get-FileHash <file>`
+
+A checksum only shows that the file matches the release page. To know the
+release really comes from the project, check the signature too. From
+the first signed release, `SHA256SUMS.txt.sig` sits next to `SHA256SUMS.txt`;
+it holds one line per signer, `<public key> <signature>`. The project's public
+release key is published in the source (`src/node/release-keys.txt`), on the
+project's website and in each announcement: compare it in more than one place.
+To check with openssl 3 (Linux, or macOS with Homebrew's openssl), for a key
+`KEY` (64 hex digits) and its signature `SIG` taken from that line:
+
+    printf '302a300506032b6570032100%s' "$KEY" | xxd -r -p > key.der
+    printf '%s' "$SIG" | xxd -r -p > sig.bin
+    openssl pkeyutl -verify -pubin -inkey key.der -keyform DER -rawin \
+        -in SHA256SUMS.txt -sigfile sig.bin
+
+It must say `Signature Verified Successfully`; then check the file against
+`SHA256SUMS.txt` as above. `pec-update.sh` does all of this for you, and pecd,
+pec-miner and Pectara Wallet refuse an update without a valid signature.
+Do not use a release whose signature does not verify.
 
 ## Licence
 
