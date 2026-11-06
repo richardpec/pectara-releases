@@ -288,9 +288,59 @@ itself. The reward (3,890 PEC at first) is paid to the same address, and can
 be spent after 100 blocks, as mined coins can. The coin that staked comes
 back at once.
 
+**Staking with someone else's computer (delegation).** If your coins are on
+a phone, or you do not want to keep a computer running, you can let a staking
+node stake them for you. The node can **never spend** your coins: it holds a
+key that can only stake. Your own key can spend them at any time, which ends
+the delegation. In return the node keeps a share of each reward, up to
+**20%** (written into the delegation, so the node cannot change it). The
+rest of each reward comes back into the delegation, still yours.
+
+- The node's operator gives you a **staking code**: one short code starting
+  with `pecstake1` (`tpecstake1` on the testnet) that holds their staking key
+  and their fee. Paste it in the wallet's Staking tab: it shows "this node
+  keeps 2.5% of each reward"; enter the amount, review, and confirm. The fee
+  is written into your delegation, so the node cannot raise it later. (From
+  the command line, `pec-cli readstakingcode <code>` shows what a code
+  says.)
+- On the command line, `pec-cli delegate <staking key> <amount> <fee in percent>` shows what would
+  happen; add `true` to do it. The coins start their staking age again, like
+  any coin you move.
+- `pec-cli listdelegations` lists them; `getbalance` counts them as
+  **delegated**. `pec-cli redelegate` moves one to another node (or changes
+  the fee) and keeps its age; `pec-cli undelegate` brings the coin back to
+  your wallet.
+- In Pectara Wallet the **Staking** tab covers staking and this: turn staking
+  on or off, paste a staking code to delegate, see your delegations with **Move…**
+  (paste another node's staking code) and **End…** buttons, and create your own staking
+  code if you run a node. Every action shows what will happen and asks before it
+  sends. The wallet must be unlocked.
+- Pick a node you trust to stay online, and spread your coins over several
+  nodes rather than one: a node that goes offline simply earns nothing for
+  you, but a few big nodes make the network easier to attack.
+- Your recovery words restore your delegations (the owner keys come from them).
+  The node's staking key does not come from your words and is not needed to
+  get your coins back.
+
+To run the node side: leave staking on, keep the wallet unlocked for staking,
+and give owners your staking code (below). The code uses the wallet's first
+staking key; `getstakingcode <fee> <n>` uses key `n` (0 to 19) if you want
+several separate codes. Fees and a delegated coin's reward come to the wallet's
+mining address.
+
+Create your staking code in the wallet (Staking tab, "Stake for others with this
+node": type your fee, press **Create staking code**, copy it) or with
+`pec-cli getstakingcode <fee in percent>`. It needs no unlock. Give owners the
+code and tell them your fee. To change your fee, make a new code; owners who
+already delegated keep the fee they wrote. If you want your node to ignore
+coins delegated at a lower fee than you ask, put `min_fee = "2.5"` (percent,
+in quotes) under
+`[staking]` in `pecd.toml`; `pec-cli getstakinginfo` then shows how many coins
+it is leaving alone.
+
 **Watching it**
 
-- Pectara Wallet: the Home page's Staking card shows the wallet's status in
+- Pectara Wallet: the Staking tab shows the wallet's status in
   words, the coins taking part and blocks staked. The Transactions list
   shows rewards as **staked**.
 - `pec-cli getstakinginfo`: the same, and why not if it is not staking (not
@@ -677,7 +727,7 @@ To check with openssl 3 (Linux, or macOS with Homebrew's openssl), for a key
         -in SHA256SUMS.txt -sigfile sig.bin
 
 It must say `Signature Verified Successfully`; then check the file against
-`SHA256SUMS.txt` as above. `pec-update.sh` does all of this for you, and pecd,
+`SHA256SUMS.txt` as above. `pec-update.sh` (Linux, macOS) and `pec-update.ps1` (Windows) do all of this for you, and pecd,
 pec-miner and Pectara Wallet refuse an update without a valid signature.
 Do not use a release whose signature does not verify.
 
