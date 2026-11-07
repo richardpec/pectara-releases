@@ -658,12 +658,16 @@ connections will not work, but your node can still connect out.
 
 ## Updates
 
-pecd keeps itself and pec-cli up to date. **When it starts**, it checks for a
-new version, installs it and restarts. While running it checks every 6 hours,
-but only says in its log that a new version is out; it is installed the next
-time pecd starts, so a running node (or its mining) is never interrupted.
-The previous versions are kept next to them with `.old` added to their names.
-To turn this off, set `auto_update = false` under `[update]` in `pecd.toml`.
+On mainnet and the testnet, pecd never installs a new version by itself. It
+checks when it starts and every 6 hours, and says in its log when a new
+version is out, with the releases page. Install it with Pectara Wallet's
+**Install update** button, with `pec-update.sh` (Linux, macOS) or
+`pec-update.ps1` (Windows), or by hand after checking the signed
+`SHA256SUMS.txt` (see the verification guide). The previous versions are kept
+next to the new ones with `.old` added to their names. If pecd runs as a
+systemd service, `pec-update.sh` finds it and offers to restart it
+(`--restart` does it without asking); otherwise restart pecd yourself. `auto_update = true`
+under `[update]` in `pecd.toml` is ignored on these networks.
 
 ## Repairing a node on a wrong chain
 
