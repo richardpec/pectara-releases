@@ -14,13 +14,14 @@ written in [Zig](https://ziglang.org), derived from Peercoin.
 **Pectara Wallet** is a desktop wallet with windows and buttons: your balance,
 sending and receiving, transactions, names, mining and staking. It runs the node for
 you. Download the zip for your system, unzip it into a folder of its own and
-start **pec-go-gui** (`pec-go-gui.exe` on Windows; on Linux run `pectara-wallet`):
+start **pec-gui** (`pec-gui.exe` on Windows; on Linux run `pectara-wallet`):
 
 | System | Download |
 |---|---|
-| Windows (64-bit) | [pec-go-gui-x86_64-windows.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-go-gui-x86_64-windows.zip) |
-| Linux (Intel/AMD, 64-bit) | [pec-go-gui-x86_64-linux.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-go-gui-x86_64-linux.zip) |
-| macOS (Apple silicon) | [pec-go-gui-aarch64-macos.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-go-gui-aarch64-macos.zip) |
+| Windows (64-bit) | [pec-gui-x86_64-windows.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-gui-x86_64-windows.zip) |
+| Linux (Intel/AMD, 64-bit) | [pec-gui-x86_64-linux.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-gui-x86_64-linux.zip) |
+| macOS (Apple silicon) | [pec-gui-aarch64-macos.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-gui-aarch64-macos.zip) |
+| macOS (Intel) | [pec-gui-x86_64-macos.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-gui-x86_64-macos.zip) |
 
 The zip holds the wallet, pecd and pec-cli;
 keep them together. The first time, the wallet helps you create a wallet
@@ -47,30 +48,32 @@ the wallet too.
 
 ## Download
 
-There are two programs. **pecd** is the node: it keeps a copy of the chain,
+There are three programs. **pecd** is the node: it keeps a copy of the chain,
 talks to other nodes, holds your wallet and can mine. **pec-cli** sends
-commands to a running pecd. Download both for your system (these links
-always point to the newest release):
+commands to a running pecd. **pec-miner** mines through a pecd on another
+computer. **pecd** is a single file you can download on its own (these links
+always point to the newest release); **pec-cli** and **pec-miner** come in
+the zip for your system, the wallet zip for your system, which holds all three.
 
-| System | Node | Commands |
+| System | Node | Zip with pecd, pec-cli and pec-miner |
 |---|---|---|
-| Linux (Intel/AMD, 64-bit) | [pecd-x86_64-linux](https://github.com/richardpec/pectara-releases/releases/latest/download/pecd-x86_64-linux) | [pec-cli-x86_64-linux](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-cli-x86_64-linux) |
-| Linux (ARM 64-bit, e.g. Raspberry Pi 4/5) | [pecd-aarch64-linux](https://github.com/richardpec/pectara-releases/releases/latest/download/pecd-aarch64-linux) | [pec-cli-aarch64-linux](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-cli-aarch64-linux) |
-| Windows (64-bit) | [pecd-x86_64-windows.exe](https://github.com/richardpec/pectara-releases/releases/latest/download/pecd-x86_64-windows.exe) | [pec-cli-x86_64-windows.exe](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-cli-x86_64-windows.exe) |
+| Linux (Intel/AMD, 64-bit) | [pecd-x86_64-linux](https://github.com/richardpec/pectara-releases/releases/latest/download/pecd-x86_64-linux) | [pec-gui-x86_64-linux.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-gui-x86_64-linux.zip) |
+| Linux (ARM 64-bit, e.g. Raspberry Pi 4/5) | [pecd-aarch64-linux](https://github.com/richardpec/pectara-releases/releases/latest/download/pecd-aarch64-linux) | [pec-gui-aarch64-linux.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-gui-aarch64-linux.zip) |
+| Windows (64-bit) | [pecd-x86_64-windows.exe](https://github.com/richardpec/pectara-releases/releases/latest/download/pecd-x86_64-windows.exe) | [pec-gui-x86_64-windows.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-gui-x86_64-windows.zip) |
 
 macOS is not available yet. Older versions are on the [Releases](../../releases) page.
 
-Each download is the program itself; there is nothing to unpack. Renaming
-them to `pecd` and `pec-cli` (`pecd.exe` and `pec-cli.exe` on Windows) makes
-typing easier, and the examples below use those names; updates work with
-either name. On Windows, type commands in Command Prompt
+The pecd download is the program itself; there is nothing to unpack (renaming
+it to `pecd`, or `pecd.exe` on Windows, makes typing easier, and the examples
+below use that name; updates work with either name). Unzip a zip into a folder
+of its own. A running pecd updates only itself, not pec-cli or pec-miner: take
+those from the newest zip. On Windows, type commands in Command Prompt
 or PowerShell, opened in the folder with the programs (in PowerShell, start
 them with `.\`, for example `.\pec-cli status`).
 
 ## 1. Start your node
 
-1. Put **both** programs in a folder of their own (they update themselves
-   there).
+1. Put the programs in a folder of their own (pecd updates itself there).
 2. On Linux, make them runnable: `chmod +x pecd pec-cli`.
 3. Run `pecd`. The first time, it creates PEC's **data folder** (`~/.peccoin`
    on Linux; see [What is in the data folder](#what-is-in-the-data-folder)) with:
@@ -229,7 +232,7 @@ Things to know:
   server_password = "choose a long password"
   ```
 
-  On each other computer (pec-miner is in the release downloads):
+  On each other computer (pec-miner is inside the zips of the release):
 
   ```
   pec-miner --node 192.168.1.20
@@ -241,9 +244,9 @@ Things to know:
   internet. On pecd's own computer, `pec-miner` needs no options (it uses
   the command port and the `.cookie` password in the data folder).
 
-  pec-miner updates itself like pecd: when it starts, it installs a new
-  version if there is one and restarts. A pec-miner in pecd's folder is also
-  updated when pecd updates. (`--no-update` turns this off.)
+  pec-miner does not update itself: to update it, take the new one from the
+  wallet zip of the latest release. (`--no-update` is still accepted and
+  does nothing.)
 
   If pec-miner says pecd does not answer, the computer with pecd may be
   blocking the port. Windows asks whether to allow pecd the first time the
