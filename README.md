@@ -14,15 +14,15 @@ written in [Zig](https://ziglang.org), derived from Peercoin.
 **Pectara Wallet** is a desktop wallet with windows and buttons: your balance,
 sending and receiving, transactions, names, mining and staking. It runs the node for
 you. Download the zip for your system, unzip it into a folder of its own and
-start **pec-gui** (`pec-gui.exe` on Windows):
+start **pec-go-gui** (`pec-go-gui.exe` on Windows; on Linux run `pectara-wallet`):
 
 | System | Download |
 |---|---|
-| Windows (64-bit) | [pec-gui-x86_64-windows.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-gui-x86_64-windows.zip) |
-| Linux (Intel/AMD, 64-bit) | [pec-gui-x86_64-linux.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-gui-x86_64-linux.zip) |
-| Linux (ARM 64-bit) | [pec-gui-aarch64-linux.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-gui-aarch64-linux.zip) |
+| Windows (64-bit) | [pec-go-gui-x86_64-windows.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-go-gui-x86_64-windows.zip) |
+| Linux (Intel/AMD, 64-bit) | [pec-go-gui-x86_64-linux.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-go-gui-x86_64-linux.zip) |
+| macOS (Apple silicon) | [pec-go-gui-aarch64-macos.zip](https://github.com/richardpec/pectara-releases/releases/latest/download/pec-go-gui-aarch64-macos.zip) |
 
-The zip holds the wallet, the graphics library it needs, pecd and pec-cli;
+The zip holds the wallet, pecd and pec-cli;
 keep them together. The first time, the wallet helps you create a wallet
 (write down the 24 recovery words it shows you) or restore one. It updates
 itself, and pecd, when they start. On Windows, if nothing happens when you
