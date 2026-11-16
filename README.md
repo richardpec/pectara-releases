@@ -573,6 +573,34 @@ leaves it locked.
 wallet (a small fee), so the offer can never be used. Until you do, the
 seller can still accept it, even after the coins stop being kept aside.
 
+### Proposals: what "verified" means
+
+Anyone with a name can publish a proposal and vote on it (the Proposals tab, or
+`pec-cli listproposals`, `createproposal`, `voteproposal`). A vote is only a
+signal: it moves no coins and changes no rules.
+
+A proposal can carry a **verified** mark. It sorts the list and nothing more:
+unverified proposals are still published, can be voted on and are counted the
+same way, and the mark does not say a proposal is sound. The wallet lists
+verified proposals by default; press "Show all" to see the rest.
+
+A proposal is marked verified in one of two ways:
+
+- **By taking part.** Its name is at least 30 days old (43,200 blocks) and has
+  voted on at least 3 earlier proposals made by other names. Only a name's first
+  vote on a proposal counts, and only under the same key: if a name is sold or
+  its owner changes, its count starts again from zero.
+- **By sponsors.** 5 other names, each at least 30 days old, sponsor it
+  (`pec-cli sponsorproposal ID NAME`, or "Sponsor…" on the proposal's page). A
+  sponsorship costs the same fee as a vote (1 PEC at the first reward, paid to
+  the block maker, not refunded) and is not a vote. This is the way for a new
+  name's first proposals.
+
+`pec-cli getproposerstatus NAME` shows where a name stands. Without `true` at
+the end, `createproposal` and `sponsorproposal` only say what they would cost
+and whether the proposal would be listed as verified. The marks start at a
+block height that is announced with the release that carries them.
+
 ## 7. Looking at the chain
 
 | Command | Shows |
@@ -706,7 +734,7 @@ To use another folder (for example a bigger disk), start pecd with
 | `testnet/names.json` | Names you are buying that are waiting to be claimed |
 | `testnet/offers.json` | Your offers to buy names from other people |
 | `testnet/sent.json` | Who you sent each payment to, as you typed it (e.g. `@kay`), for the history |
-| `testnet/silent.json` | Silent Payments your wallet has found (your 24 words find them again if it is lost) |
+| `testnet/silent.json` | Silent Payments your wallet has found, and the keys that let it see payments to your reusable address and names while it is locked. They cannot spend, but they show what you have been paid, so keep this file private (your 24 words find everything again if it is lost) |
 | `testnet/blocks/`, `testnet/chain/` | The chain. If deleted, pecd downloads it again. |
 | `testnet/peers.dat` | Other nodes pecd has found |
 | `testnet/pecd.log` | The log (older logs as `pecd.log.1` … `.5`) |
