@@ -601,6 +601,33 @@ the end, `createproposal` and `sponsorproposal` only say what they would cost
 and whether the proposal would be listed as verified. The marks start at a
 block height that is announced with the release that carries them.
 
+### The "Pectara team member" badge
+
+Some names show a shield and the words **Pectara team member**. It means the
+Pectara team's keys have confirmed the present owner of that name as a member
+of the team. The wallet shows it beside the name on the Names page, when you
+pay an @name, and beside the name that made a proposal; `pec-cli getname NAME`
+reports it as `team_member`. Hover over the shield to see until when the
+confirmation runs: it lasts a year and the team renews it.
+
+What it does not mean:
+
+- It gives the name no extra right. A team member's vote counts as anyone's.
+- It is not advice. A payment to a name with the badge can be undone no more
+  than any other, so still check the name and the amount.
+- A name without it is simply not confirmed. Most names are not the team's
+  and never will be.
+
+The badge belongs to the name's owner, not to the name: if the name is sold,
+given away, released or runs out, the badge goes at once, by itself.
+
+**Names that look official.** Anyone can register a name such as
+`@pectara-support`. A name that has `pectara` in it and no badge is shown with
+a warning that it is not confirmed as belonging to the Pectara team. When you
+pay such a name the wallet asks you to tick that you have read the warning
+before it lets you send. The team will never ask you for your recovery words
+or passphrase, with or without a badge.
+
 ## 7. Looking at the chain
 
 | Command | Shows |
