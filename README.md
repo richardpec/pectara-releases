@@ -324,6 +324,14 @@ rest of each reward comes back into the delegation, still yours.
 - Your recovery words restore your delegations (the owner keys come from them).
   The node's staking key does not come from your words and is not needed to
   get your coins back.
+- **What others can see.** A delegation is public on the chain, like every
+  payment: anyone, including the node that stakes it, can see its amount, your
+  delegation's owner key, the node's key and fee, and the transaction that
+  funded it with the addresses that paid in. Delegating does not by itself tell
+  the node your name or where you connect from, and every delegation uses a
+  fresh owner key, so your delegations are not tied together by key. But anyone
+  can follow the money in and out, and owners who use the same node are visible
+  to each other as sharing its key. Do not think of a delegation as private.
 
 To run the node side: leave staking on, keep the wallet unlocked for staking,
 and give owners your staking code (below). The code uses the wallet's first
@@ -340,6 +348,13 @@ coins delegated at a lower fee than you ask, put `min_fee = "2.5"` (percent,
 in quotes) under
 `[staking]` in `pecd.toml`; `pec-cli getstakinginfo` then shows how many coins
 it is leaving alone.
+
+To see what your node stakes for others: the Staking tab's "Staked for others
+by this node" panel (the total, the number of coins and owner keys, and the
+largest coins with their owner keys), or `pec-cli liststakedforothers [limit]`.
+It is the same list anyone can get from the chain with
+`getdelegations {"staker": key}`; the wallet only gathers it for you. An owner
+key is not a name.
 
 **Watching it**
 
@@ -695,6 +710,35 @@ server_port = 12345   # your choice: no standard port is decided
 ```
 
 The service signs in as user `explorer`. This port offers only the read-only commands above (plus `getblockcount`, `getblockhash`, and `gettransaction`), but no command about names: not `listallnames`, not `getname`; wallet, mining, peer and `stop` commands do not exist on it. It is not encrypted, so for anything public put a web server with HTTPS and rate limits in front, and run that node with `wallet = false`.
+
+**A port for your own phone wallet.** A wallet that keeps its own keys can use your node through a third port, with a user name and password for each person:
+
+```toml
+[wallet_client]
+server = true
+users = ["alice:at least 12 characters", "bob:another long password"]
+server_port = 12346   # your choice: no standard port is decided
+# server_public = true   # default: this computer only
+```
+
+It offers the explorer's reading commands plus sending a signed transaction (`sendrawtransaction`) and fee estimates, never your node's wallet. It is not encrypted: keep it on your home network or a VPN, or put HTTPS in front.
+
+Each client address is held to limits so that no one can use the node up: a budget of requests that refills every second (a cheap command costs 1 unit, one that reads a lot 20), a small budget for sending transactions, and a number of connections. Someone over a limit is told to wait (HTTP 429) and nothing else is affected. The defaults suit a phone wallet; you can change them in the same section:
+
+```toml
+# max_connections = 64               # in all
+# max_connections_per_address = 8
+# requests_per_second = 40
+# request_burst = 200
+# broadcasts_per_minute = 10
+# broadcast_burst = 5
+```
+
+For a phone wallet that receives to a reusable address, the port also offers `getsilentblocks` (public data per block, from which the phone finds its own payments with its scan key, which never leaves it) and `resolvename @name` (the address that payments to a name go to, and little else). The node can see which block ranges a phone reads and which names it looks up, so a phone should use its owner's own node rather than a stranger's if that matters.
+
+**Running a public node for phone wallets.** A phone wallet needs no PC: it uses a public node. To run one, set `anonymous = true` under `[wallet_client]` (no passwords needed; leave `users` out), keep the port on this computer (`server_public = false`) and put Caddy or nginx with a normal HTTPS certificate in front of it (Caddy gets one by itself). The web server must add the client's address (Caddy's `reverse_proxy` does; for nginx `proxy_set_header X-Forwarded-For $remote_addr;`) and pass the app's `X-Pec-Client` header on. Run the node with `wallet = false` unless it also stakes for others (`offer_fee = "2.5"` under `[staking]` publishes a staking code through `getstakingoffer`, with the wallet unlocked for staking), keep automatic updates on (an old node is a risk to the phones that use it), and open only the HTTPS port in the firewall. Each phone has a budget of its own and each address a larger shared one, so one busy phone cannot starve others, and a flood from one address cannot use up the node; the limits are the same settings as above. `getnodeinfo` shows an app what your node allows. How a node joins the project's list of nodes for the app: not decided yet.
+
+With a web server on the same computer in front of it for HTTPS, tell it to add the client's address (`proxy_set_header X-Forwarded-For $remote_addr;` in nginx, replacing any value the client sent): each client then gets its own budget, instead of all sharing the web server's.
 
 ## Helping the network
 
